@@ -1,0 +1,30 @@
+npx outil d'executiond e packages
+--
+pour commencer un projet Expo
+npx create-expo-app -t AwesomeProject --  bonne methode le t pour le template 
+npx create-expo-app@latest -t (un autre versions sans t mais trop complexe)
+npx create-expo-app@latest template blank nom-projet (definition template pas detape suplementaire)
+npm install
+expo start pour demarrer le projet
+
+passage
+
+sdk software developement kit - ensemble d'outil de bibliotheque pour ton app (camera)
+apartir du sdk 46 l'introduction du cli local
+local inclus dans le sdk veut dire installé dans chaque projet comme une dependance (global cetait sur la machine)
+--
+pour utiliser le expo cli
+vidéo install de node fait
+git
+et watchman qui surveille les changements de fichiers dans ton projet en temps réel, 
+ce qui rend le rechargement automatique (hot reload) plus rapide et plus fiable.
+Homebrew, c'est "le gestionnaire de paquets manquant pour macOS (app store en ligne de commande)
+et il rajoute des fonctionalités qui n'existent pas dans la version initiale de mac
+
+---
+
+intialiser projetn
+pour lancer l'app npx expo start ou npm start (voir packag json)
+
+
+----- 

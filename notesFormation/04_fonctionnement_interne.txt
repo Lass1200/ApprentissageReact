@@ -1,0 +1,14 @@
+============================
+FONCTIONNEMENT INTERNE DE REACT NATIVE
+============================
+
+Le HTML n'est pas interprété sur Android et iOS (contrairement au web).
+On écrit donc soit du code natif, soit du code React Native,
+qui se chargera de traduire les composants pour qu'ils soient interprétés
+et génèrera le code natif correspondant.
+ 
+Le code JavaScript, quant à lui, est exécuté directement par React Native.
+Une machine virtuelle sert de pont (bridge) pour atteindre Android et iOS.
+ 
+Grâce à cette machine virtuelle, on a accès à un certain nombre de
+fonctionnalités et d'API natives : caméra, géolocalisation, etc.

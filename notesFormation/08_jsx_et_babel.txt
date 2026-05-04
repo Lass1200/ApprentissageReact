@@ -1,0 +1,75 @@
+============================================================================================
+COURS REACT — PARTIE 3 : JSX ET BABEL
+============================================================================================
+
+1. C'EST QUOI LE JSX ?
+--------------------------------------------------------------------------------------------
+Le JSX ressemble à du HTML mais c'est en réalité du JavaScript.
+Tout ce qui est écrit dans le return() d'un composant est du JSX.
+
+  function App() {
+    return (
+      <div className="App">   ← JSX
+        <h1>Bonjour</h1>      ← JSX
+      </div>
+    );
+  }
+
+Signes distinctifs du JSX par rapport au HTML :
+  - className  au lieu de  class
+  - onPress    au lieu de  onclick
+  - {}         pour injecter du JavaScript dans le markup
+
+2. LES ACCOLADES {} EN JSX
+--------------------------------------------------------------------------------------------
+Les accolades sont la "porte d'entrée" vers le JavaScript à l'intérieur du JSX.
+
+  <h1>{this.props.title}</h1>    → affiche la valeur de props.title
+  <Car color={maVariable} />     → passe une variable comme prop
+  <p onCopy={this.noCopy}>       → passe une fonction comme événement
+
+  ⚠️ Les accolades en dehors du return() sont du JS classique :
+     const obj = { color: 'red' }   → objet JS, pas du JSX
+
+3. CE QUE LE NAVIGATEUR COMPREND OU PAS
+--------------------------------------------------------------------------------------------
+  JS classique (ES6+)  →  ✅ compris par les navigateurs modernes
+  JSX                  →  ❌ jamais compris par le navigateur → Babel obligatoire
+
+4. LE RÔLE DE BABEL
+--------------------------------------------------------------------------------------------
+Babel a deux rôles :
+
+  1. Transformer le JSX en JS classique (obligatoire)
+  2. Transpiler le JS moderne (ES6+) pour les vieux navigateurs (optionnel)
+
+Babel transforme le JSX en React.createElement() :
+
+  // Ce qu'on écrit (JSX)
+  <div className="titre">toto</div>
+
+  // Ce que Babel produit (mode classic)
+  React.createElement("div", { className: "titre" }, "toto")
+
+  // Ce que Babel produit (mode automatic, React 17+)
+  import { jsx as _jsx } from "react/jsx-runtime";
+  _jsx("div", { className: "titre", children: "toto" })
+
+5. ANCIEN VS NOUVEAU TRANSFORM BABEL
+--------------------------------------------------------------------------------------------
+  Mode "classic"    → React.createElement — nécessite d'importer React manuellement
+  Mode "automatic"  → _jsx — Babel gère les imports tout seul (standard depuis React 17)
+
+  Dans un projet Vite ou CRA : Babel est inclus automatiquement, rien à faire.
+  Dans un HTML avec CDN     : il faut ajouter Babel manuellement (voir Partie 2).
+
+6. LE FLOW COMPLET
+--------------------------------------------------------------------------------------------
+  Ton code JSX
+  → Babel transforme le JSX en JS classique
+  → Vite / Webpack bundle et injecte le script dans le HTML
+  → Le navigateur reçoit du JS classique qu'il comprend
+  → React manipule le DOM
+  → La page s'affiche
+
+============================================================================================
