@@ -1,0 +1,267 @@
+============================================================================================
+SECTION 13 — STATE AVANCÉ, MAP(), COMMUNICATION PARENT-ENFANT, FRAGMENT, DESTRUCTURING
+============================================================================================
+
+--------------------------------------------------------------------------------------------
+PARTIE 1 — AFFICHAGE DYNAMIQUE AVEC .map()
+--------------------------------------------------------------------------------------------
+
+On a continué à travailler sur les states, cette fois en utilisant la méthode .map()
+pour afficher dynamiquement une liste de composants depuis le state.
+
+La méthode addTenYears ajoute 10 ans à chaque voiture en soustrayant 10 à l'année stockée.
+On calcule ensuite l'âge réel avec : getFullYear() - year.
+
+ BUG dans la première version : this.state.voitures[1].yea → il manque le "r" à "year".
+   De plus, map() dans addTenYears retourne param.year -= 10, ce qui mute directement
+   l'objet — il faudrait retourner { ...param, year: param.year - 10 } pour rester immutable.
+
+Première version (avec bugs) :
+
+    addTenYears = () => {
+        const updatedState = this.state.voitures.map((param) => {
+            return param.year -= 10;  //  mutation directe + retourne un nombre, pas un objet
+        })
+        this.setState({ updatedState })
+    }
+
+---
+
+Version corrigée et améliorée — le titre est dans le state, .map() génère les composants :
+
+    import { Component } from 'react'
+    import Car from './Cars';
+
+    class Mycars extends Component {
+
+        state = {
+            voitures: [
+                { name: 'Ford', color: 'red', year: 2000 },
+                { name: 'Mercedes', color: 'black', year: 2005 },
+                { name: 'Peugeot', color: 'green', year: 2018 },
+            ],
+            titre: 'Mon catalogue Voitures 2',
+        }
+
+        addTenYears = () => {
+            const updatedVoitures = this.state.voitures.map((param) => {
+                return { ...param, year: param.year - 10 };  //  version immutable correcte
+            })
+            this.setState({ voitures: updatedVoitures })
+        }
+
+        render() {
+            const year = new Date().getFullYear();
+            return (
+                <div>
+                    <h1>{this.state.titre}</h1>
+                    <button onClick={this.addTenYears}> + 10 ans </button>
+
+                    {
+                        this.state.voitures.map((voiture, index) => (
+                            <Car
+                                key={index}
+                                nom={voiture.name}
+                                color={voiture.color}
+                                year={year - voiture.year + ' ans'}
+                            />
+                        ))
+                    }
+                </div>
+            )
+        }
+    }
+    export default Mycars;
+
+  La prop key={index} est obligatoire sur chaque élément mappé pour que React
+    puisse identifier et mettre à jour efficacement les éléments de la liste.
+
+
+--------------------------------------------------------------------------------------------
+PARTIE 2 — COMMUNICATION PARENT → ENFANT (passer une fonction comme prop)
+--------------------------------------------------------------------------------------------
+
+On peut passer une fonction du parent vers l'enfant via les props.
+L'enfant peut ainsi déclencher une action dans le parent.
+
+Dans l'exemple : Maman donne un ordre, Toto ne peut répondre que si l'ordre a été donné
+(le bouton est désactivé tant que messageMaman est null).
+
+    // Composant parent : Maman.jsx
+    import { Component } from 'react';
+    import Toto from './Toto';
+
+    class Maman extends Component {
+
+        state = {
+            messageMaman: null,
+            messageToto: null,
+        }
+
+        ordreMaman = () => {
+            this.setState({ messageMaman: "va ranger ta chambre" })
+        }
+
+        responseToto = () => {
+            this.setState({ messageToto: "d'acc" })
+        }
+
+        render() {
+            return (
+                <div>
+                    <h1>Maman</h1>
+                    <button onClick={this.ordreMaman}>Ordre de la mère</button>
+                    <p>{this.state.messageMaman}</p>
+                    <hr />
+                    <Toto
+                        name="Toto"
+                        leState={this.state}
+                        responseToto={this.responseToto}
+                    />
+                </div>
+            )
+        }
+    }
+    export default Maman;
+
+
+    // Composant enfant : Toto.jsx
+    const Toto = (props) => {
+
+        const btnReponse = props.leState.messageMaman !== null
+            ? <button onClick={props.responseToto}>Réponse</button>
+            : <button disabled>Réponse</button>;
+
+        return (
+            <div>
+                <h2>{props.name}</h2>
+                {btnReponse}
+                <p>{props.leState.messageToto}</p>
+            </div>
+        )
+    }
+    export default Toto;
+
+
+--------------------------------------------------------------------------------------------
+PARTIE 3 — FRAGMENT
+--------------------------------------------------------------------------------------------
+
+Problème : chaque composant React doit retourner un seul élément parent.
+On enveloppait tout dans une <div>, ce qui polluait le DOM avec des noeuds inutiles.
+
+ Fragment (<> </>) permet de regrouper plusieurs éléments sans ajouter de noeud dans le DOM.
+   La <div> disparaît complètement — Fragment ne la transforme pas, il la supprime.
+
+ Idée fausse : "des div peuvent être transformées en <tr>"
+ CORRECTION : Fragment ne transforme rien. Il remplace la <div> par... rien du tout.
+
+Syntaxe :
+    return (
+        <>
+            <h1>Titre</h1>
+            <p>Contenu</p>
+        </>
+    )
+
+Ou avec la syntaxe longue (nécessaire si on veut passer une prop key sur le fragment) :
+    import { Fragment } from 'react';
+
+    return (
+        <Fragment key={index}>
+            <h1>Titre</h1>
+            <p>Contenu</p>
+        </Fragment>
+    )
+
+
+--------------------------------------------------------------------------------------------
+PARTIE 4 — DESTRUCTURING ES6
+--------------------------------------------------------------------------------------------
+
+Le destructuring (déstructuration) ES6 permet d'extraire des valeurs d'un tableau
+ou d'un objet et de les placer directement dans des variables distinctes.
+
+-- Sur un tableau --
+
+    var array = ["Mark", "Léa", "Justine"];
+    var [userOne, userTwo, userThree] = array;  // destructuring
+    console.log(userOne, userTwo, userThree);    // Mark Léa Justine
+
+-- Sur un objet --
+
+    var members = {
+        userOne: "Mark",
+        userTwo: "Léa",
+        userThree: "Justine",
+    }
+    // Avec renommage des variables :
+    var { userOne: Hulk, userTwo: SpiderMan, userThree: superMan } = members;
+    console.log(Hulk);  // Mark
+
+ Dans la version sans destructuring, members.userTwo était mal orthographié (userTwe).
+
+
+-- Destructuring dans un Function Component React --
+
+    // Option 1 : destructuring directement dans les paramètres
+    const Users = ({ name, age }) => {
+        console.log(name, age);
+        return (
+            <div>
+                <p>Chanteur : {name} — {age} ans</p>
+            </div>
+        )
+    }
+
+    // Option 2 : destructuring dans le corps de la fonction
+    const Users = (props) => {
+        const { name, age } = props;
+        return (
+            <div>
+                <p>Chanteur : {name} — {age} ans</p>
+            </div>
+        )
+    }
+    export default Users;
+
+
+-- Destructuring dans un Class Component React --
+
+    import React from 'react';
+
+    class Users extends React.Component {
+        render() {
+            const { name, age } = this.props;
+            return (
+                <div>
+                    <p>Chanteur : {name} — {age} ans</p>
+                </div>
+            )
+        }
+    }
+    export default Users;
+
+  On aurait pu aussi écrire directement {this.props.name} dans le JSX sans destructurer,
+    mais le destructuring en haut du render() rend le code plus lisible.
+
+
+-- Composant Display qui utilise Users --
+
+    import { Component } from 'react';
+    import Users from './Singers';
+
+    class Display extends Component {
+        render() {
+            return (
+                <div>
+                    <Users name="Eric Clapton" age="74" />
+                    <Users name="Mick Jagger" age="80" />
+                    <Users name="David Bowie" age="69" />
+                </div>
+            )
+        }
+    }
+    export default Display;
+
+============================================================================================

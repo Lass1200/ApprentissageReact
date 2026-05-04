@@ -1,0 +1,14 @@
+============================
+REACT NATIVE
+============================
+
+React Native est une bibliothèque basée sur la même logique que React :
+notion de state, composants, etc.
+
+Différences principales avec React :
+- Les composants sont différents (ex : <View>, <Text> au lieu des balises HTML)
+- Le code est compilé en code natif Android et iOS
+
+React Native sait compiler ses composants pour en faire des widgets en code natif.
+Il donne aussi accès à certaines API natives (caméra, géolocalisation, etc.),
+ce qui permet de faire beaucoup plus de choses qu'une simple application web.

@@ -1,0 +1,98 @@
+============================================================================================
+COURS REACT — PARTIE 7 : LE THIS ET LE BIND
+============================================================================================
+
+1. C'EST QUOI "THIS" ?
+--------------------------------------------------------------------------------------------
+Dans une classe React, "this" représente l'instance de la classe en cours d'exécution.
+C'est l'objet qui contient le state, les méthodes, etc.
+
+  this = l'instance de App, qui ressemble à :
+  {
+    state: { titre: 'Mon catalogue Voitures' },
+    changeTitle: () => {},
+    changeViaParam: () => {},
+    render: () => {}
+  }
+
+  Ce n'est pas la classe elle-même (le "moule"), mais l'objet créé à partir de ce moule.
+  Dans React, tu ne vois jamais "new App()" car React le fait pour toi via <App />.
+
+2. LE PROBLÈME DU THIS DANS LES ÉVÉNEMENTS
+--------------------------------------------------------------------------------------------
+Quand on passe une fonction à onClick, React la "détache" de son contexte pour l'appeler
+plus tard. Au moment du clic, la fonction ne sait plus que this = la classe App.
+
+  // ❌ Problème : React détache la fonction, this devient undefined
+  changeTitle() {
+    this.setState({ titre: 'nouveau' })  // ERREUR : this = undefined
+  }
+  <button onClick={this.changeTitle}>Click</button>
+
+3. LES SOLUTIONS
+--------------------------------------------------------------------------------------------
+
+  A) Fonction fléchée comme méthode de classe (recommandé)
+  ──────────────────────────────────────────────────────────
+  La fonction fléchée n'a pas son propre "this", elle hérite du contexte parent (la classe).
+
+    changeTitle = () => {           // ← fléchée, this = instance de App ✅
+      this.setState({ titre: 'nouveau' })
+    }
+    <button onClick={this.changeTitle}>Click</button>
+
+  B) Fonction anonyme fléchée dans le onClick
+  ─────────────────────────────────────────────
+  La fléchée anonyme est créée au moment du render(), quand this est connu.
+  Elle capture le this disponible autour d'elle à ce moment-là.
+
+    <button onClick={() => this.changeTitle()}>Click</button>
+    // ↑ créée pendant le render, this = instance de App ✅
+
+  C) Bind (ancienne méthode)
+  ───────────────────────────
+  bind() lie explicitement le this d'une fonction à un objet spécifique.
+
+    // Dans le constructor
+    constructor(props) {
+      super(props);
+      this.changeTitle = this.changeTitle.bind(this);
+    }
+
+    // Ou directement dans le onClick (avec paramètre)
+    <button onClick={this.changeViaBind.bind(this, 'titre via bind')}>via bind</button>
+    // bind(this, 'titre via bind') :
+    //   1. lie le this → instance de App
+    //   2. passe 'titre via bind' comme premier paramètre
+
+4. POURQUOI LA FONCTION ANONYME FLÉCHÉE FONCTIONNE ?
+--------------------------------------------------------------------------------------------
+Quand React exécute le render() :
+  - this = l'instance de App est présent et connu
+  - La fonction fléchée est créée à ce même moment
+  - Elle capture donc le this disponible autour d'elle
+
+  render() {
+    // ici this = instance de App ✅
+    return (
+      <button onClick={() => this.changeTitle()}>
+      // ↑ fléchée créée ici, au même moment que le render
+      // elle voit this = instance de App et le capture !
+      </button>
+    )
+  }
+
+  Alors qu'une fonction classique passée à onClick est appelée PLUS TARD par React,
+  hors du contexte du render → this est perdu.
+
+5. RÉSUMÉ
+--------------------------------------------------------------------------------------------
+  onClick={this.changeTitle}          → ❌ this perdu (fonction classique détachée)
+  onClick={() => this.changeTitle()}  → ✅ this conservé (fléchée capture le contexte)
+  changeTitle = () => {}              → ✅ this conservé automatiquement (fléchée comme méthode)
+  .bind(this)                         → ✅ this lié explicitement (ancienne méthode)
+
+  En pratique : utiliser des fonctions fléchées comme méthodes suffit,
+  pas besoin de bind dans les projets modernes.
+
+============================================================================================

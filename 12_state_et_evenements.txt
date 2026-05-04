@@ -1,0 +1,146 @@
+============================================================================================
+COURS REACT — PARTIE 6 : STATE ET ÉVÉNEMENTS
+============================================================================================
+
+1. C'EST QUOI LE STATE ?
+--------------------------------------------------------------------------------------------
+Le state est un moyen d'enregistrer des données localement dans un composant.
+Quand le state change, React met à jour automatiquement l'affichage.
+
+  "Je modifie mon state (mes données), ce qui pousse React à mettre à jour
+   son Virtual DOM pour ensuite appliquer uniquement les changements nécessaires
+   sur le DOM réel."
+
+  - Class component   → state = {}          (syntaxe classe)
+  - Function component → const [x, setX] = useState(0)  (hooks)
+
+2. STATE DANS UN CLASS COMPONENT
+--------------------------------------------------------------------------------------------
+
+  class App extends Component {
+    state = {
+      titre: 'Mon catalogue Voitures'
+    }
+
+    render() {
+      return (
+        <div>
+          <Mycars title={this.state.titre} />
+        </div>
+      )
+    }
+  }
+
+  → On accède au state via this.state.titre
+  → On modifie le state uniquement via this.setState(), jamais directement
+
+3. MODIFIER LE STATE — LES DIFFÉRENTES MÉTHODES
+--------------------------------------------------------------------------------------------
+
+  A) Valeur en dur
+  ──────────────────
+    changeTitle = (e) => {
+      console.log(e.target);
+      this.setState({ titre: 'Mon nouveau titre' })
+    }
+
+    <button onClick={this.changeTitle}>Changer le titre</button>
+
+  B) Via un paramètre (avec fonction anonyme dans onClick)
+  ──────────────────────────────────────────────────────────
+    changeViaParam = (titre) => {
+      this.setState({ titre })   // raccourci ES6 : titre: titre
+    }
+
+    // La fonction anonyme fléchée est nécessaire pour passer un paramètre
+    <button onClick={() => this.changeViaParam('titre via un param')}>via param</button>
+
+  C) Via bind
+  ─────────────
+    changeViaBind = (param) => {
+      this.setState({ titre: param })
+    }
+
+    // bind(this, param) lie le contexte ET passe le paramètre
+    <button onClick={this.changeViaBind.bind(this, 'titre via bind')}>via bind</button>
+
+  D) Via un input (contrôlé)
+  ───────────────────────────
+    changeViaInput = (e) => {
+      this.setState({ titre: e.target.value })
+    }
+
+    <input type="text" onChange={this.changeViaInput} value={this.state.titre} />
+
+4. ÉVÉNEMENTS ET EVENT LISTENERS
+--------------------------------------------------------------------------------------------
+
+  onCopy       → déclenché quand l'utilisateur copie du texte
+  onMouseOver  → déclenché quand la souris passe sur l'élément
+  onClick      → déclenché au clic
+  onChange     → déclenché à chaque modification d'un input
+
+  Exemple avec onMouseOver et classList :
+
+    addStyle = (e) => {
+      // e.target cible l'élément qui a déclenché l'événement
+      if (e.target.classList.contains('styled')) {
+        e.target.classList.remove('styled')
+      } else {
+        e.target.classList.add('styled')
+      }
+    }
+
+    <h1 onMouseOver={this.addStyle}>{this.props.title}</h1>
+
+  Dans le CSS :
+
+    h1.styled {
+      color: red;
+      text-transform: uppercase;
+    }
+
+5. CODE FINAL COMPLET (App.js)
+--------------------------------------------------------------------------------------------
+
+  import { Component } from 'react'
+  import './App.css';
+  import Mycars from './components/Mycars';
+
+  class App extends Component {
+    state = {
+      titre: 'Mon catalogue Voitures'
+    }
+
+    changeTitle = (e) => {
+      this.setState({ titre: 'Mon nouveau titre' })
+    }
+
+    changeViaParam = (titre) => {
+      this.setState({ titre })
+    }
+
+    changeViaBind = (param) => {
+      this.setState({ titre: param })
+    }
+
+    changeViaInput = (e) => {
+      this.setState({ titre: e.target.value })
+    }
+
+    render() {
+      return (
+        <div className="App">
+          <Mycars title={this.state.titre} />
+          <button onClick={this.changeTitle}>Changer le nom en dur</button>
+          <button onClick={() => this.changeViaParam('titre via un param')}>via param</button>
+          <button onClick={this.changeViaBind.bind(this, 'titre via bind')}>via bind</button>
+          <input type="text" onChange={this.changeViaInput} value={this.state.titre} />
+        </div>
+      );
+    }
+  }
+
+  export default App;
+
+============================================================================================

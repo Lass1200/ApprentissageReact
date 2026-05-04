@@ -1,0 +1,8 @@
+============================
+REACT
+============================
+
+React est une bibliothèque JavaScript pour créer des interfaces utilisateur,
+grâce à des composants autonomes qui maintiennent leur propre état (state).
+
+Ces composants sont affichés sur le web via le render de ReactDOM.

@@ -1,0 +1,57 @@
+============================================================================================
+COURS REACT / REACT NATIVE — PARTIE 1 : INTRODUCTION
+============================================================================================
+
+1. REACT
+--------------------------------------------------------------------------------------------
+React est une bibliothèque JavaScript pour créer des interfaces utilisateur,
+grâce à des composants autonomes qui maintiennent leur propre état (state).
+Ces composants sont affichés sur le web via le render de ReactDOM.
+
+2. REACT NATIVE
+--------------------------------------------------------------------------------------------
+React Native est une bibliothèque basée sur la même logique que React (state, composants...),
+mais avec deux différences majeures :
+
+  - Les composants sont différents : <View>, <Text> au lieu des balises HTML
+  - Le code est traduit (et non compilé) en code natif Android et iOS
+
+React Native traduit ses composants pour en faire des widgets natifs.
+Il donne aussi accès à des API natives : caméra, géolocalisation, etc.
+
+3. LES 4 PLATEFORMES
+--------------------------------------------------------------------------------------------
+  1. Android natif
+  2. iOS natif
+  3. React JS (web)
+  4. React Native (mobile)
+
+Chaque plateforme a ses propres composants :
+
+  Plateforme        Composant
+  Android natif  →  android.view
+  iOS natif      →  UIView
+  React JS       →  <div>
+  React Native   →  <View>
+
+4. CORRESPONDANCE DES COMPOSANTS React JS ↔ React Native
+--------------------------------------------------------------------------------------------
+  React JS          React Native
+  <div>         →   <View>
+  <p>           →   <Text>
+  <button>      →   <Button>
+  <input>       →   <TextInput>
+  onClick       →   onPress
+
+5. FONCTIONNEMENT INTERNE DE REACT NATIVE
+--------------------------------------------------------------------------------------------
+Le HTML n'est pas interprété sur Android et iOS (contrairement au web).
+On écrit donc du code React Native, qui se chargera de traduire les composants
+pour qu'ils soient interprétés et génèrera le code natif correspondant.
+
+Le code JavaScript, quant à lui, est exécuté directement par React Native.
+Une machine virtuelle (bridge/pont) sert d'intermédiaire pour atteindre Android et iOS.
+Grâce à ce bridge, on a accès à un certain nombre de fonctionnalités et d'API natives :
+caméra, géolocalisation, etc.
+
+============================================================================================

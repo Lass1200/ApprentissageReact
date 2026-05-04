@@ -1,0 +1,60 @@
+============================================================================================
+COURS REACT — PARTIE 2 : CRÉER UN PROJET REACT
+============================================================================================
+
+1. REACT SANS FRAMEWORK (CDN — pour tester rapidement)
+--------------------------------------------------------------------------------------------
+On peut importer React via deux balises <script> dans le HTML :
+
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+  → react.development.js    : la bibliothèque qui gère la logique des composants et le state
+  → react-dom.development.js : fait le lien entre React et le DOM du navigateur
+
+Comme le navigateur ne comprend pas le JSX, il faut aussi ajouter Babel en CDN :
+
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+Et déclarer le script avec le type "text/babel" :
+
+  <script type="text/babel">
+    // ton code JSX ici
+  </script>
+
+2. CRÉER UN PROJET REACT — LES OPTIONS
+--------------------------------------------------------------------------------------------
+
+  ❌ create-react-app (obsolète, plus maintenu depuis 2022)
+     npx create-react-app mon-app
+     → lent, lourd, bundler Webpack dépassé
+
+  ✅ Vite (recommandé pour apprendre React sans SSR)
+     npm create vite@latest mon-app -- --template react
+     → rapide, léger, standard actuel
+
+  ✅ Next.js (recommandé par la doc officielle React, avec SSR)
+     npx create-next-app@latest
+     → full-stack, SSR, routing intégré
+
+  ✅ Expo (pour React Native / mobile)
+     npx create-expo-app@latest mon-app
+
+3. SSR VS CSR — C'EST QUOI ?
+--------------------------------------------------------------------------------------------
+  SSR (Server Side Rendering) : le HTML est généré côté serveur avant d'être envoyé
+                                 au navigateur. Utile pour le SEO et les gros sites.
+
+  CSR (Client Side Rendering) : le navigateur reçoit une page HTML vide,
+                                 et React génère tout le contenu côté client en JS.
+                                 → Vite fonctionne en CSR, parfait pour apprendre.
+
+4. TABLEAU RÉCAPITULATIF
+--------------------------------------------------------------------------------------------
+  Besoin                          Outil recommandé
+  Apprendre React simplement  →   Vite
+  Site avec SSR / SEO         →   Next.js
+  Site statique avec CMS      →   Gatsby
+  Application mobile          →   Expo
+
+============================================================================================
